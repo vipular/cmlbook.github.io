@@ -1,0 +1,11 @@
+# In _config.yml
+title: Concepts of Machine Learning
+author: Vipul Arora
+copyright: "2025"  # Copyright year to be placed in the footer
+logo: logo.png
+execute:
+  execute_notebooks: force
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib

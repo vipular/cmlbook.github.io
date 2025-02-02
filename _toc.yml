@@ -1,0 +1,16 @@
+# In _toc.yml
+format: jb-book
+root: intro
+chapters:
+- file: 01_prob
+- file: 02_eval
+- file: 03_linearmodels
+- file: 04_densenn
+- file: 05_cnn
+- file: 06_rnn
+- file: 07_optim
+- file: 08_kmeans
+- file: 09_mle
+- file: 10_gmm
+- file: 11_pca
+- file: 12_decisiontree
