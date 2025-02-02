@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+
+
+<html >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>NN Optimization &#8212; Concepts of Machine Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '07_optim';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="K-means Clustering" href="08_kmeans.html" />
+    <link rel="prev" title="Recurrent Neural Networks" href="06_rnn.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="None"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">Concepts of Machine Learning</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    About the book
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_prob.html">Probability Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_eval.html">Evaluation Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_linearmodels.html">Linear Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_densenn.html">Neural Networks (Dense)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_cnn.html">Convolutional Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_rnn.html">Recurrent Neural Networks</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">NN Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_kmeans.html">K-means Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_mle.html">Distribution Learning with Maximum Likelihood Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_gmm.html">Gaussian Mixture Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_pca.html">Principal Component Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_decisiontree.html">Decision Trees</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/07_optim.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>NN Optimization</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="nn-optimization">
+<h1>NN Optimization<a class="headerlink" href="#nn-optimization" title="Permalink to this headline">#</a></h1>
+<ol class="arabic">
+<li><p>(NNO) <span class="math notranslate nohighlight">\(y = \text{ReLU}\left(\sum_{i=0}^{1} v_i d_i\right)\)</span> where <span class="math notranslate nohighlight">\(d_i\)</span> is a dropout layer with a dropout probability of 0.2. If <span class="math notranslate nohighlight">\(v_i\)</span> = [-0.4, 0.8] for <span class="math notranslate nohighlight">\(i\)</span> = [0, 1], the expected value <span class="math notranslate nohighlight">\(E\left[ y \right]\)</span> is ___.</p></li>
+<li><p>(NNO) A network is to be trained to detect rose from input-target pairs (x,t). The final layer has one neuron with output (h) and final estimate <span class="math notranslate nohighlight">\(P(\text{Rose} | x; \theta) = \sigma(h)\)</span> To train the network, binary cross entropy loss function is used, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(\theta) = -t \ln P(\text{Rose} | x; \theta) - (1 - t) \ln P(\text{not Rose} | x; \theta).\]</div>
+<p>Then <span class="math notranslate nohighlight">\(\frac{\partial \mathcal{L}(\theta)}{\partial \theta}\)</span> is</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\left(\sigma\left(h\right)-t\right)\frac{\partial h}{\partial\theta}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\left(t-\sigma\left(h\right)\right)\frac{\partial h}{\partial\theta}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\left(\frac{t}{\sigma\left(h\right)}-\frac{1-t}{1-\sigma\left(h\right)}\right)\frac{\partial h}{\partial\theta}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\left(\frac{t}{\sigma\left(h\right)}+\frac{1-t}{1-\sigma\left(h\right)}\right) \frac{\partial h}{\partial\theta}\)</span></p></li>
+<li><p>None of the above</p></li>
+</ul>
+</li>
+<li><p>(NNO)  For a multi-class classification problem, a neural network is given as follows:
+$<span class="math notranslate nohighlight">\(h_{i_1} = \sum_{i_0=1}^{2} w_{i_0i_1} x_{i_0}\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(v_{i_1} = \sigma(h_{i_1})\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(h_{i_2}' = \sum_{i_1=1}^{3} w_{i_1i_2}' v_{i_1}\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(y_{i_2} = \text{softmax}(h_{i_2}') \)</span>$
+Use categorical cross-entropy loss to compute the following:</p>
+<ol class="arabic simple">
+<li><p>Write the loss function (E) in terms of the variables defined above and the targets <span class="math notranslate nohighlight">\(t_{i_2}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{\partial E}{\partial y_1}\)</span> (i.e., <span class="math notranslate nohighlight">\(i_2\)</span> = 1).</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{\partial E}{\partial w_{11}'}\)</span> (i.e., <span class="math notranslate nohighlight">\(i_1\)</span> = <span class="math notranslate nohighlight">\(i_2\)</span> = 1).</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{\partial E}{\partial w_{11}}\)</span> (i.e., <span class="math notranslate nohighlight">\(i_0\)</span> = <span class="math notranslate nohighlight">\(i_1\)</span> = 1).</p></li>
+</ol>
+</li>
+<li><p>(NNO) The empirical risk over data d is written as <span class="math notranslate nohighlight">\(\mathcal{R}_d\)</span>. In the case of overfitting, the following happens during training</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{R}_{train}\)</span> does not decrease further</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{R}_{val}\)</span> does not decrease further and becomes constant</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{R}_{train}\)</span> decreases but <span class="math notranslate nohighlight">\(\mathcal{R}_{val}\)</span> increases</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{R}_{train}\)</span> oscillates</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{R}_{train}\)</span> becomes constant due to parameters being stuck in a local minimum</p></li>
+</ul>
+</li>
+<li><p>(NNO) A recurrent neural network is given as</p>
+<div class="math notranslate nohighlight">
+\[y_i^{\left(t\right)}=\sigma\left(\sum_{j}{u_{ij}x_j^{\left(t\right)}}+\sum_{j}{w_{ij}y_j^{\left(t-1\right)}}+b_i\right)\]</div>
+<p>The gradient <span class="math notranslate nohighlight">\(\frac{\partial y_i^{\left(t\right)}}{\partial b_i}\)</span> is given by</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y_i^{\left(t\right)}\left(1-y_i^{\left(t\right)}\right)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(y_i^{\left(t\right)}\left(1-y_i^{\left(t\right)}\right)\left(1+w_{ii}\right)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{l=0}^{\infty}{\left(\prod_{k=0}^{l}{y_i^{\left(t-k\right)}\left(1-y_i^{\left(t-k\right)}\right)}\right)w_{ii}^l}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{l=0}^{\infty}{\left(y_i^{\left(t-l\right)}\left(1-y_i^{\left(t-l\right)}\right)\right)w_{ii}^l}\)</span></p></li>
+<li><p>None of the above</p></li>
+</ul>
+</li>
+<li><p>(NNO) For feature selection, a model <span class="math notranslate nohighlight">\(\hat{y}=\sum_{i}{w_ix_i}\)</span> is trained in a way that many <span class="math notranslate nohighlight">\(w_i\)</span> become zero. To achieve this, the regularization term that is added to the loss function is</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sum_{i}\left|w_i\right|^2\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\sum_{i}\left|w_i\right|\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\({\sum_{i}\left|w_i\right|}^{-1}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\left(y-\hat{y}\right)^2\)</span></p></li>
+<li><p>None of the above</p></li>
+</ul>
+</li>
+<li><p>(NNO) <span class="math notranslate nohighlight">\(\tanh{\left(x\right)}=\frac{e^x-e^{-x}}{e^x+e^{-x}}\)</span>.
+The derivative of <span class="math notranslate nohighlight">\(\tanh(x)\)</span> w.r.t. <span class="math notranslate nohighlight">\(x\)</span> at <span class="math notranslate nohighlight">\(x=\log_e{2}\)</span> is</p>
+<ul class="simple">
+<li><p>0.6</p></li>
+<li><p>0.64</p></li>
+<li><p>0.5</p></li>
+<li><p>0.75</p></li>
+<li><p>None of the above</p></li>
+</ul>
+</li>
+<li><p>(NNO) A non-linear model <span class="math notranslate nohighlight">\(\hat{y}=\sigma(w_0+w_1x)\)</span> is to be optimized using gradient descent algorithm over the loss term <span class="math notranslate nohighlight">\(\mathcal{L}=\frac{1}{2}\left(y-\hat{y}\right)^2\)</span>. Here, <span class="math notranslate nohighlight">\(\sigma\left(\cdot\right)\)</span> is the sigmoid function. The weights are chosen to be <span class="math notranslate nohighlight">\(w_0=\log_e\ \left(2\right),\ w_1=\log_e\left(0.5\right)\)</span>. Learning rate <span class="math notranslate nohighlight">\(\eta=1\)</span>. Find the updated value of <span class="math notranslate nohighlight">\(w_0\)</span> after iterating once over the training data <span class="math notranslate nohighlight">\(\left(x=2,y=2/3\right)\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\log_e\ \left(2\right)-\frac{1}{3}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\log_e\ \left(2\right)-\frac{2}{27}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\log_e\ \left(2\right)+\frac{1}{3}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\log_e\ \left(2\right)+\frac{2}{27}\)</span></p></li>
+<li><p>None of these</p></li>
+</ul>
+</li>
+<li><p>(NNO) The data for flower (<span class="math notranslate nohighlight">\(R\)</span> or <span class="math notranslate nohighlight">\(L\)</span>) classification is given as</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{x}^{\intercal}=\left[\begin{matrix}5&amp;4&amp;5.5&amp;2&amp;3\\2&amp;2.5&amp;3&amp;4.5&amp;4\\\end{matrix}\right], \mathbf{y}^{\intercal}=[R,R,R,L,L].\end{split}\]</div>
+<p>What is the first sample, i.e., <span class="math notranslate nohighlight">\(\mathbf{x}[0,:]\)</span>, after normalizing it to zero mean and unit variance (use MLE).
+- <span class="math notranslate nohighlight">\([0.86,-1.3]\)</span>
+- <span class="math notranslate nohighlight">\([0.27,-1.2]\)</span>
+- <span class="math notranslate nohighlight">\([0,0]\)</span>
+- <span class="math notranslate nohighlight">\([1.23,-1.32]\)</span>
+- None of these</p>
+<ol class="arabic simple" start="10">
+<li><p>(NNO) For multi-label classification, a neural network has 3 inputs. There is no hidden layer. The output layer has 2 neurons, <span class="math notranslate nohighlight">\(h_j=\sum_{i=1}^3 w_{ij} x_i + b_j\)</span>. If the target is <span class="math notranslate nohighlight">\(t_j\)</span> and the model predicts <span class="math notranslate nohighlight">\(\hat{y}_j\)</span>, the update rule for <span class="math notranslate nohighlight">\(w_{ij}\)</span> is:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(w_{ij} \leftarrow w_{ij}+\eta (t_j-\hat{y}_j)x_i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{ij} \leftarrow w_{ij}+\eta (\frac{t_j}{\hat{y}_j}-\frac{1-t_j}{1-\hat{y}_j})x_i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{ij} \leftarrow w_{ij}+\eta (\frac{t_j}{\hat{y}_j}-\frac{1-t_j}{1-\hat{y}_j})y_j x_i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{ij} \leftarrow w_{ij}+\eta (t_j\log\hat{y}_j)x_i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{ij} \leftarrow w_{ij}+\eta (t_j\log\hat{y}_j + (1-t_j)\log(1-\hat{y}_j))x_i\)</span></p></li>
+<li><p>None of these</p></li>
+</ul>
+</li>
+<li><p>(NNO) For hyperparameter tuning, which of the following is found to work best for large search spaces</p>
+<ul class="simple">
+<li><p>Grid search with narrow grid</p></li>
+<li><p>Grid search with wide grid</p></li>
+<li><p>Gradient descent with adaptive stepsize</p></li>
+<li><p>Pick randomly</p></li>
+<li><p>Analytic optimization</p></li>
+</ul>
+</li>
+<li><p>(NNO)</p></li>
+</ol>
+<ul class="simple">
+<li><p>What is Overfitting?</p></li>
+<li><p>How would you detect if your model is overfitting?</p></li>
+<li><p>What different methods could you use to avoid it?</p></li>
+</ul>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="06_rnn.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Recurrent Neural Networks</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="08_kmeans.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">K-means Clustering</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Vipul Arora
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
